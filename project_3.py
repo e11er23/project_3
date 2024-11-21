@@ -1,7 +1,7 @@
 #Project 3 python file
 
 print("test")
-
+import calendar
 #needs
 #caregivers info
 #schedules managment
@@ -38,6 +38,8 @@ print("test")
 
 # print(ryan.availability)
 
+shift_hours = 6 # 7-1 and 1-7 are both 6 hour shifts
+
 #new logic for getting details
 
 def input_caregiver_details():
@@ -72,13 +74,78 @@ def input_caregiver_details():
 
     return caregivers
 
-
+# REMEMBER TO ADD SOMETHING TO HANDLE IF THEY ENTER SOMETHING OTHER THAN A,U,P
 #test
 
 
-if __name__ == "__main__":
-    caregivers= input_caregiver_details()
-    for name, details in caregivers.items():
-            print(f"Name: {name}")
-            print(f"Phone: {details['phone']}")
-            print(f"Email: {details['email']}\n")
+# if __name__ == "__main__":
+#     caregivers= input_caregiver_details()
+#     for name, details in caregivers.items():
+#             print(f"Name: {name}")
+#             print(f"Phone: {details['phone']}")
+#             print(f"Email: {details['email']}\n")
+
+
+#assign people shifts
+# part of this code is from the class sample code, and part is tweaked
+def assign_shifts(caregivers, year, month):
+    shifts = ["7:00AM - 1:00PM", "1:00PM - 7:00PM"]
+
+    num_days= calendar.monthrange(year,month)[1] #gets the number of days for the month
+
+    schedule = {} #empty to begin
+
+    for day in range(1, num_days + 1):
+        schedule[day] = {} #dic for this days shifts
+
+        for shift in shifts:
+            shift_type = "AM" if shift== shifts[0] else "PM" #if the shift is whats first in the shifts list it will be am but if not it will be PM
+
+
+
+            #want the people who preferred the shift
+            preferred = [ name for name, details in caregivers.items() if details["availability"][day][shift_type]== "P"] # will get the ones that are preferred
+
+            #available 
+            available = [ name for name, details in caregivers.items() if details["availability"][day][shift_type]== "A"] # will get the ones that are available
+
+            
+                         
+            if preferred:
+                assigned = preferred[0] #the first person in the preffered list is assigned
+            elif available:
+                assigned = available[0]
+            else:
+                assigned = "unassigned"
+
+            schedule[day][shift]= assigned
+
+            if assigned != "unassigned":
+                caregivers[assigned]["assigned_hours"] += shift_hours #if the shift is assigned it will add to the hours
+
+    return schedule 
+
+#test
+# def test_assign_shifts(caregivers):
+#     year= 2024
+#     month= 11
+
+#     schedule = assign_shifts(caregivers, year, month)
+
+#     print("\nschedule:")
+#     for day, shifts in schedule.items():
+#         print(f"Day {day}:")
+#         for shift, assigned in shifts.items():
+#             print(f"{shift}: {assigned}")
+
+#     print("\nCaregiver assigned hours:")
+#     for name, details in caregivers.items():
+#         print(f"{name}: {details['assigned_hours']} hours")
+
+
+# if __name__ == "__main__":
+#     print("Enter caregiver details...\n")
+#     caregivers = input_caregiver_details()
+
+
+#     test_assign_shifts(caregivers)
