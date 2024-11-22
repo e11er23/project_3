@@ -1,0 +1,56 @@
+import calendar
+
+class SalaryCalculator:
+    def __init__(self, caregivers, schedule, year, month):
+        self.caregivers = caregivers
+        self.schedule = schedule
+        self.year = year
+        self.month = month
+        self.num_days = calendar.monthrange(year, month)[1]
+
+    def calculate_salary_report(self):
+        # initialize hours and rate
+        for name in self.caregivers:
+            self.caregivers[name]["assigned_hours"] = 0
+
+        # calculate assigned hours from the schedule
+        for day in range(1, self.num_days + 1):
+            for shift in ['7:00am - 1:00pm', '1:00pm - 7:00pm']:
+                caregiver = self.schedule[day].get(shift)
+                if caregiver != "Unassigned":
+                    self.caregivers[caregiver]["assigned_hours"] += 6  # hours per shift
+
+        # salary report
+        salary_report = [] # empty list
+        total_weekly = {}
+        total_monthly = 0
+
+        for week_start in range(1, self.num_days + 1, 7):
+            weekly_total = 0
+            for name, details in self.caregivers.items():
+                week_hours = sum(
+                    6 for day in range(week_start, min(week_start + 7, self.num_days + 1))
+                    for shift in ['7:00am - 1:00pm', '1:00pm - 7:00pm']
+                    if self.schedule[day].get(shift) == name)
+                
+                weekly_pay = week_hours * details["Pay_rate"]
+                weekly_total += weekly_pay
+
+                salary_report.append(f"Caregiver: {name}\n")
+                salary_report.append(f" total assigned hours this week: {week_hours} hours\n")
+                salary_report.append(f" total pay this week: ${weekly_pay:}\n")
+
+            total_weekly[week_start] = weekly_total
+            total_monthly += weekly_total
+
+        # adding weekly and monthly salary totals to the report
+        for week_start, weekly_total in total_weekly.items():
+            salary_report.append(f"weekly total for week starting with {week_start} = ${weekly_total:}\n")
+        salary_report.append(f"total monthly pay: ${total_monthly:}")
+
+        # save report to .txt file
+        pay_report_filr = "salary_report.txt"
+        with open(pay_report_file, "w") as file:
+            file.write(.join(salary_report))
+
+        print("Salary report has been saved as salary_report.txt")
