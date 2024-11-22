@@ -253,6 +253,9 @@ def display_schedule_as_html(schedule, year, month):
 
 
 
+
+
+
 ######################## html avail schedule created using AI as allowed by proj directions
 def generate_availability_schedule(caregiver_name, details, year, month):
     """
@@ -328,7 +331,7 @@ if __name__ == "__main__":
             else:
                 print("Year must be a positive number. Try again.")
         except ValueError:
-            print("Invalid input! Please enter a valid year as a number (e.g., 2024).")
+            print("Invalid input. Please enter a valid year as a number (ex 2024).")
 
     while True:
         month = int(input("Enter the month (1-12) for the schedule: "))
@@ -337,10 +340,17 @@ if __name__ == "__main__":
         else:
             print("Month must be a number between 1 and 12. Try again.")
 
+
     #avail schedule for each
     for name, details in caregivers.items():
         generate_availability_schedule(name, details, year, month)
     #comp schedule
+
+
+ #avail schedule for each
+    for name, details in caregivers.items():
+        generate_availability_schedule(name, details, year, month)
+ #comp schedule
 
     schedule = assign_shifts(caregivers, year, month)
 
