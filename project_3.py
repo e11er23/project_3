@@ -249,6 +249,70 @@ def display_schedule_as_html(schedule, year, month):
 
     # Open the file in the default web browser
     webbrowser.open(f"file://{file_path}", new=2)
+
+
+
+
+######################## html avail schedule created using AI as allowed by proj directions
+def generate_availability_schedule(caregiver_name, details, year, month):
+    """
+    Generates an HTML table summarizing caregiver's availability.
+    """
+    # Start the HTML for the caregiver's availability
+    html = f"""
+    <html>
+    <head>
+        <title>{caregiver_name}'s Availability for {calendar.month_name[month]} {year}</title>
+        <style>
+            table {{
+                border-collapse: collapse;
+                width: 100%;
+                margin: 20px 0;
+            }}
+            th, td {{
+                border: 1px solid black;
+                padding: 10px;
+                text-align: center;
+            }}
+            th {{
+                background-color: #f2f2f2;
+            }}
+        </style>
+    </head>
+    <body>
+        <h1>{caregiver_name}'s Availability for {calendar.month_name[month]} {year}</h1>
+        <table>
+            <tr>
+                <th>Day</th>
+                <th>AM</th>
+                <th>PM</th>
+            </tr>
+    """
+
+    # Add rows for each day in the month
+    for day in range(1, calendar.monthrange(year, month)[1] + 1):
+        am = details["availability"].get(day, {}).get("AM", "Unavailable")
+        pm = details["availability"].get(day, {}).get("PM", "Unavailable")
+        html += f"<tr><td>{day}</td><td>{am}</td><td>{pm}</td></tr>"
+
+    # Close the HTML structure
+    html += """
+        </table>
+    </body>
+    </html>
+    """
+
+    # Save the HTML to a file
+    file_name = f"availability_schedule_{caregiver_name}.html"
+    file_path = os.path.abspath(file_name)
+    with open(file_name, "w") as file:
+        file.write(html)
+
+    # Print confirmation and open the file
+    print(f"Availability schedule saved as {file_path}")
+    webbrowser.open(f"file://{file_path}", new=2) 
+    ##########
+    
     #test
 if __name__ == "__main__":
     
@@ -272,6 +336,11 @@ if __name__ == "__main__":
                 break
         else:
             print("Month must be a number between 1 and 12. Try again.")
+
+    #avail schedule for each
+    for name, details in caregivers.items():
+        generate_availability_schedule(name, details, year, month)
+    #comp schedule
 
     schedule = assign_shifts(caregivers, year, month)
 
